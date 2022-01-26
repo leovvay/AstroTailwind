@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import Button from '../../common/Button';
 import BasicInformation from './components/BasicInformation';
+import LaunchProject from './components/LaunchProject';
 import Tabs from './components/Tabs';
 import UploadTraitLayer from './components/UploadTraitLayer';
-import AssignRarity from './components/AssignRarity';
-import LayerPreview from './components/LayerPreview';
 
 const Dashboard = () => {
   const {
@@ -23,10 +22,14 @@ const Dashboard = () => {
     reValidateMode: 'onSubmit',
     defaultValues: {
       test: [{ layer: '', file: null }],
+      addMusic: false,
+      scheduleLaunch: false,
+      endDate: false,
+      ReactDatepicker: '',
+      thumbnail: [],
     },
   });
-  const [activeTab, setActiveTab] = useState(1);
-  const [assignRarity, setAssignRarity] = useState({});
+  const [activeTab, setActiveTab] = useState(5);
   return (
     <>
       <div className='px-0 md:px-12 lg:px-24 w-full max-w-7xl'>
@@ -36,7 +39,7 @@ const Dashboard = () => {
               Create NEAR Wallet
             </Button>
           </div>
-          <Button type='solid'>Connect My Wallet</Button>
+          <Button type='solid' onClick={() => {}}>Connect My Wallet</Button>
         </div>
         <div className='bg-white pb-24 rounded-md'>
           <Tabs setActiveTab={setActiveTab} activeTab={activeTab} />
@@ -62,29 +65,18 @@ const Dashboard = () => {
               setActiveTab={setActiveTab}
               activeTab={activeTab}
             />
-          ) : activeTab === 3 ? (
-            <AssignRarity
+          ) : activeTab === 5 ? (
+            <LaunchProject
               register={register}
               errors={errors}
               control={control}
               watch={watch}
               trigger={trigger}
-              setValue={setValue}
               setActiveTab={setActiveTab}
               activeTab={activeTab}
-              setAssignRarity={setAssignRarity}
-            />
-          ) : activeTab === 4 ? (
-            <LayerPreview
-              register={register}
-              errors={errors}
-              control={control}
-              watch={watch}
-              trigger={trigger}
+              getValues={getValues}
               setValue={setValue}
-              setActiveTab={setActiveTab}
-              activeTab={activeTab}
-              assignRarity={assignRarity}
+              Controller={Controller}
             />
           ) : null}
         </div>

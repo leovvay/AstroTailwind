@@ -30,7 +30,7 @@ const Tabs = ({ activeTab }) => {
   ];
   return (
     <>
-      <div className='w-full px-4 py-10 lg:pl-[70px] lg:pr-13 overflow-auto'>
+      <div className='w-full px-4 py-14 lg:p-14 overflow-auto'>
         <div className='flex'>
           <div className='relative flex gap-10'>
             {menu.map((item) => (

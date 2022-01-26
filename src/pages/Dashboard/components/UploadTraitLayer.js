@@ -10,6 +10,7 @@ import { ReactComponent as RightArrow } from '../../../asset/svg/RightArrow.svg'
 import { ReactComponent as Folder } from '../../../asset/svg/Folder.svg';
 
 import { PlusIcon } from '@heroicons/react/outline';
+import Input from '../../../common/Input';
 
 const UploadTraitLayer = ({
   register,
@@ -20,19 +21,18 @@ const UploadTraitLayer = ({
   setActiveTab,
   activeTab,
 }) => {
+  //`remove` incase we want to remove layers from `fields`
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'test',
   });
-  const [enabled, setEnabled] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const test = watch('test') || '';
-
-  console.log(test);
+  const test = watch('test');
+  const addMusic = watch('addMusic');
 
   return (
     <>
-      <div className='px-4 lg:px-14 flex flex-col lg:flex-row gap-10 xl:gap-24'>
+      <div className='px-4 lg:px-14 flex flex-col lg:flex-row gap-10'>
         <div className='lg:max-w-sm'>
           <h3 className='pb-2'>Upload Trait Layer</h3>
           <p className='body2'>
@@ -45,20 +45,25 @@ const UploadTraitLayer = ({
         </div>
         <div className='flex flex-col gap-4 lg:min-w-350px'>
           <span className='flex place-items-center gap-4'>
-            <Switch
-              checked={enabled}
-              onChange={setEnabled}
-              className={`${
-                enabled ? 'bg-primary' : 'bg-primary opacity-60'
-              } relative inline-flex items-center w-20 h-10 rounded-full`}
-            >
-              <span className='sr-only'>Enable notifications</span>
-              <span
+            <div className='w-20'>
+              <Switch
+                checked={addMusic}
+                onChange={() => {
+                  setValue(`addMusic`, !addMusic);
+                }}
+                type='checkbox'
                 className={`${
-                  enabled ? 'translate-x-10' : 'translate-x-2'
-                } inline-block transform w-8 h-8 bg-white rounded-full`}
-              />
-            </Switch>
+                  addMusic ? 'bg-primary' : 'bg-primary opacity-60'
+                } relative inline-flex items-center w-20 h-10 rounded-full`}
+              >
+                <span className='sr-only'>Enable notifications</span>
+                <span
+                  className={`${
+                    addMusic ? 'translate-x-10' : 'translate-x-2'
+                  } inline-block transform w-8 h-8 bg-white rounded-full`}
+                />
+              </Switch>
+            </div>
             <h3>Add a Sound/Mp3 Layer</h3>
           </span>
 
@@ -66,10 +71,11 @@ const UploadTraitLayer = ({
             {fields.map((item, index) => {
               return (
                 <div className='grid gap-6 mt-8' key={item.id}>
-                  <input
+                  <Input
                     id={`test.${index}.layer`}
                     type='text'
-                    {...register(`test.${index}.layer`, {
+                    name={`test.${index}.layer`}
+                    register={register(`test.${index}.layer`, {
                       required: 'This field is required',
                     })}
                     errors={errors}
@@ -79,17 +85,29 @@ const UploadTraitLayer = ({
                           ? e.target.value.trim()
                           : e.target.value)
                     }
-                    placeholder={`Layer ${index} Name`}
+                    placeholder={`Layer ${index + 1} Name`}
                     rows={8}
-                    className={`p-4 w-full shadow-sm focus:ring-primary focus:border-primary block sm:text-sm border-2 ${
+                    classNameContainer={`${
                       errors &&
                       errors.nftCollectionName &&
                       errors.nftCollectionName.message
                         ? 'border-red-600'
                         : 'border-secondary'
-                    } rounded-md`}
+                    }`}
                     defaultValue={''}
+                    children={
+                      errors &&
+                      errors.nftCollectionName &&
+                      errors.nftCollectionName.message ? (
+                        <span className='p-1 text-red-600 text-sm'>
+                          {errors.nftCollectionName.message}
+                        </span>
+                      ) : (
+                        <></>
+                      )
+                    }
                   />
+
                   <Dropzone
                     accept='application/zip, application/x-zip-compressed, multipart/x-zip'
                     name='milestoneAttachments'
@@ -142,10 +160,16 @@ const UploadTraitLayer = ({
                     }}
                   </Dropzone>
 
-                  {test[index].file ? (
+                  {test[index]?.file?.length ? (
                     <div className='w-full flex justify-between bg-primary py-2 px-4 rounded-md'>
                       <ZipFile />
-                      <Delete />
+                      <button
+                        onClick={() => {
+                          setValue(`test.${index}.file`, []);
+                        }}
+                      >
+                        <Delete />
+                      </button>
                     </div>
                   ) : null}
 
@@ -159,7 +183,7 @@ const UploadTraitLayer = ({
               append({ layer: '' });
             }}
             type={'outline'}
-            className={'flex gap-3'}
+            className={'flex gap-3 py-2 w-fit'}
           >
             <PlusIcon className='w-5 h-5' />
             Add New Layer
@@ -167,7 +191,7 @@ const UploadTraitLayer = ({
           <Button
             disabled={test.some((element) => element.layer) ? false : true}
             onClick={() => {
-              setActiveTab(activeTab + 1);
+              console.log('go next');
             }}
             className={'w-full hidden lg:block'}
           >
